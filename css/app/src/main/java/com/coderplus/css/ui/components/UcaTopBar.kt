@@ -30,7 +30,8 @@ fun UcaTopBar(
         "EPP" to "epp",
         "Riesgos" to "riesgos",
         "Reportes" to "reportes",
-        "Registro" to "registro"
+        "Registro" to "registro",
+        "Examen" to "examen"
     )
 
     Surface(

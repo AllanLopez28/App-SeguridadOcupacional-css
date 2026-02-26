@@ -68,13 +68,18 @@ fun HeroScreen(
                     isPrimary = true
                 )
 
-                UcaButton(
-                    text = "Registrarme",
-                    onClick = { onNavigate("registro") },
-                    modifier = Modifier.weight(1f),
-                    isPrimary = false
-                )
             }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            UcaButton(
+                text = "Hacer examen",
+                onClick = { onNavigate("examen") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                isPrimary = true
+            )
         }
     }
 }

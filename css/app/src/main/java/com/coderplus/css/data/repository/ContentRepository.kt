@@ -1,7 +1,9 @@
 package com.coderplus.css.data.repository
 
+import com.coderplus.css.R
 import com.coderplus.css.data.model.CardItem
 import com.coderplus.css.data.model.HeroSlide
+import com.coderplus.css.data.model.ImportanciaVisualItem
 import com.coderplus.css.data.model.ReporteItem
 import com.coderplus.css.utils.Constants
 
@@ -173,4 +175,24 @@ object ContentRepository {
             descripcion = "Documenta con fotos y contacta a tu coordinador para el registro formal."
         )
     )
+
+    val importanciaVisualItems = listOf(
+        ImportanciaVisualItem(
+            title = "Actividades seguras",
+            description = "En cada proyecto del servicio social revisamos tareas, herramientas y entorno para prevenir lesiones y proteger a estudiantes y beneficiarios.",
+            iconRes = R.drawable.ic_importancia_check
+        ),
+        ImportanciaVisualItem(
+            title = "EPP y bioseguridad",
+            description = "Se define el EPP según la actividad (guantes, mascarilla, lentes, calzado) y se refuerzan prácticas de higiene para evitar contagios o exposición a agentes.",
+            iconRes = R.drawable.ic_importancia_alert
+        ),
+        ImportanciaVisualItem(
+            title = "Rutas y puntos de reunión",
+            description = "Antes de iniciar, se indican salidas, zonas seguras y responsables de evacuación en campus o sedes externas donde participen estudiantes.",
+            iconRes = R.drawable.ic_importancia_map
+        )
+    )
+
+
 }

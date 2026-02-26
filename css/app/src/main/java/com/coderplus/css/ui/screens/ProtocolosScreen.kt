@@ -17,7 +17,10 @@ import com.coderplus.css.ui.components.UcaCard
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ProtocolosScreen(modifier: Modifier = Modifier) {
+fun ProtocolosScreen(
+    onProtocolClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -25,6 +28,7 @@ fun ProtocolosScreen(modifier: Modifier = Modifier) {
             .padding(vertical = 80.dp, horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Text(
             text = "Protocolos de emergencia",
             style = MaterialTheme.typography.headlineLarge,
@@ -56,7 +60,10 @@ fun ProtocolosScreen(modifier: Modifier = Modifier) {
                         title = item.title,
                         description = item.description,
                         iconUrl = item.iconUrl,
-                        align = Alignment.Start
+                        align = Alignment.Start,
+                        onClick = {
+                            onProtocolClick(item.title)
+                        }
                     )
                 }
             }
