@@ -1,5 +1,4 @@
 package com.coderplus.css.data.model
-
 data class ProtocolDetail(
     val id: String,
     val title: String,

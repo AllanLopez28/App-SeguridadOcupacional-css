@@ -98,15 +98,6 @@ private fun CampoYVisitasScreen(onBack: () -> Unit) {
     Scaffold(
         containerColor = bg,
         topBar = {
-            TopAppBar(
-                title = { Text("Protocolos de Seguridad") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = card)
-            )
         }
     ) { padding ->
         Column(
@@ -180,7 +171,7 @@ private fun CampoYVisitasScreen(onBack: () -> Unit) {
                     }
 
                     Text(
-                        text = "La seguridad en campo empieza antes de salir: briefing, roles, ruta y puntos de encuentro, " +
+                        text = "La seguridad en campo empieza antes de salir: verificar equipo, roles, ruta y puntos de encuentro, " +
                                 "check-in/check-out, EPP, botiquín y comunicación constante con coordinación.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White
@@ -236,7 +227,7 @@ private fun CampoYVisitasScreen(onBack: () -> Unit) {
             ) {
                 FlowStepCard(
                     number = "1.",
-                    title = "PREPARACIÓN\n(Antes)",
+                    title = "PREPARACIÓN",
                     iconRes = R.drawable.ic_checklist,
                     borderColor = Color(0xFF1E7A43),
                     items = listOf("Briefing y roles", "Ruta y punto de encuentro", "Check-in con coordinación"),
@@ -245,7 +236,7 @@ private fun CampoYVisitasScreen(onBack: () -> Unit) {
 
                 FlowStepCard(
                     number = "2.",
-                    title = "EN CAMPO\n(Durante)",
+                    title = "EN CAMPO",
                     iconRes = R.drawable.ic_walk,
                     borderColor = Color(0xFF1E7A43),
                     items = listOf("Buddy system", "Hidratación y botiquín", "Monitoreo del entorno"),
@@ -428,15 +419,7 @@ private fun IncendioScreen(onBack: () -> Unit) {
     Scaffold(
         containerColor = bg,
         topBar = {
-            TopAppBar(
-                title = { Text("Protocolos de Seguridad") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = card)
-            )
+
         }
     ) { padding ->
         Column(
@@ -805,15 +788,7 @@ private fun SismoScreen(onBack: () -> Unit) {
     Scaffold(
         containerColor = bg,
         topBar = {
-            TopAppBar(
-                title = { Text("Protocolos de Seguridad") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = card)
-            )
+
         }
     ) { padding ->
         Column(

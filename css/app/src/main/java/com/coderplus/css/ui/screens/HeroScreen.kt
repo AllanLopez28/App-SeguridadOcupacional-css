@@ -11,29 +11,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.coderplus.css.data.repository.ContentRepository
-import com.coderplus.css.ui.components.UcaButton
 import com.coderplus.css.ui.components.UcaCarousel
 
 @Composable
 fun HeroScreen(
-    onNavigate: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        // Carousel de fondo
+    Box(modifier = modifier.fillMaxWidth()) {
+
+        // Carousel
         UcaCarousel(
             slides = ContentRepository.heroSlides,
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Contenido superpuesto
+        // Texto encima
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
-                .padding(top = 80.dp, bottom = 60.dp),
+                .padding(top = 80.dp, bottom = 28.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -53,32 +50,6 @@ fun HeroScreen(
                 color = Color.White.copy(alpha = 0.95f),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 16.dp)
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
-            ) {
-                UcaButton(
-                    text = "Ver protocolos",
-                    onClick = { onNavigate("protocolos") },
-                    modifier = Modifier.weight(1f),
-                    isPrimary = true
-                )
-
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            UcaButton(
-                text = "Hacer examen",
-                onClick = { onNavigate("examen") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                isPrimary = true
             )
         }
     }

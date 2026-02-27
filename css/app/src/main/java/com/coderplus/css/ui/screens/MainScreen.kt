@@ -11,6 +11,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.coderplus.css.ui.components.UcaButton
 import com.coderplus.css.ui.components.UcaTopBar
 import kotlinx.coroutines.launch
 
@@ -27,14 +28,14 @@ fun MainScreen() {
     val navigateToSection: (String) -> Unit = { section ->
         coroutineScope.launch {
             val index = when (section) {
-                "importancia" -> 1
-                "que-es" -> 2
-                "protocolos" -> 3
-                "epp" -> 4
-                "riesgos" -> 5
-                "reportes" -> 6
-                "registro" -> 7
-                "examen" -> 8
+                "importancia" -> 2
+                "que-es" -> 3
+                "protocolos" -> 4
+                "epp" -> 5
+                "riesgos" -> 6
+                "reportes" -> 7
+                "registro" -> 8
+                "examen" -> 9
                 else -> 0
             }
             scrollState.animateScrollToItem(index)
@@ -85,10 +86,23 @@ fun MainScreen() {
                     .padding(paddingValues),
                 contentPadding = PaddingValues(bottom = 24.dp)
             ) {
-                item { HeroScreen(onNavigate = navigateToSection) }
+                // 0
+                item { HeroScreen() }
+
+                // 1 ✅ Botones abajo del Hero (ya no van “encima” del carrusel)
+                item {
+                    HeroActionsSection(
+                        onVerProtocolos = { navigateToSection("protocolos") },
+                        onHacerExamen = { navigateToSection("examen") }
+                    )
+                }
+
+                // 2
                 item { ImportanciaScreen() }
+                // 3
                 item { QueEsScreen() }
 
+                // 4
                 item {
                     ProtocolosScreen(
                         onProtocolClick = { title ->
@@ -97,10 +111,15 @@ fun MainScreen() {
                     )
                 }
 
+                // 5
                 item { EppScreen() }
+                // 6
                 item { RiesgosScreen() }
+                // 7
                 item { ReportesScreen() }
+                // 8
                 item { RegistroScreen() }
+                // 9
                 item { ExamenScreen() }
 
                 item {
@@ -119,5 +138,34 @@ fun MainScreen() {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun HeroActionsSection(
+    onVerProtocolos: () -> Unit,
+    onHacerExamen: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+            .padding(top = 12.dp, bottom = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        UcaButton(
+            text = "Ver protocolos",
+            onClick = onVerProtocolos,
+            modifier = Modifier.fillMaxWidth(),
+            isPrimary = true
+        )
+
+        UcaButton(
+            text = "Hacer examen",
+            onClick = onHacerExamen,
+            modifier = Modifier.fillMaxWidth(),
+            isPrimary = true
+        )
     }
 }

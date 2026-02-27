@@ -1,5 +1,4 @@
 package com.coderplus.css.config
-
 /**
  * Configuración centralizada de la app.
  *
