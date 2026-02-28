@@ -17,14 +17,16 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
-private fun openUrlCustomTab(context: Context, url: String) {
-    val intent = CustomTabsIntent.Builder().build()
-    intent.launchUrl(context, Uri.parse(url))
-}
-
 @Composable
 fun ExamenScreen() {
+    var showForm by remember { mutableStateOf(false) }
+
+    if (showForm) {
+        ExamenFormScreen(onBack = { showForm = false })
+        return
+    }
+
+    // --- tu ExamenScreen normal ---
     val context = LocalContext.current
     val store = remember { ExamStatusStore(context) }
     val scope = rememberCoroutineScope()
@@ -74,7 +76,7 @@ fun ExamenScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { openUrlCustomTab(context, AppConfig.EXAM_FORM_URL) },
+            onClick = { showForm = true }, // ✅ ahora abre dentro de la app
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Hacer examen (Microsoft Forms)")
