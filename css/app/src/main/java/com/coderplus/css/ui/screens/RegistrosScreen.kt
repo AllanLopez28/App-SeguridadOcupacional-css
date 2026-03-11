@@ -12,245 +12,258 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.coderplus.css.config.AppConfig
 
-/**
- * Muestra Microsoft Forms dentro de la app con WebView.
- * Requiere habilitar cookies + third-party cookies para que el login no quede en blanco.
- */
-@SuppressLint("SetJavaScriptEnabled")
+private val formUrl =
+    "https://forms.cloud.microsoft/pages/responsepage.aspx?id=hrQc_xLZ40mUNBIunEWJXhq6ZLvlw-JMlT4aQ_OVPWtUQUxJVjEzSzUyOTFYWjBNSzExTjNEM1lGMi4u&route=shorturl"
+
+// ─── Pantalla de entrada (en la LazyColumn) ───────────────────────────────────
 @Composable
 fun RegistroScreen(
+    onOpenForm: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Color(0xFFF4F6FB))
+            .padding(vertical = 60.dp, horizontal = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = "Registro / Formulario",
+            fontSize = 26.sp,
+            fontWeight = FontWeight.ExtraBold,
+            color = Color(0xFF0F2D40),
+            textAlign = TextAlign.Center
+        )
 
-    // ✅ Usa tu link completo (shorturl)
-    val formUrl = remember {
-        // Podés dejar AppConfig.EXAM_FORM_URL si ya es el correcto,
-        // pero aquí te recomiendo usar el link completo que te funcionó.
-        "https://forms.cloud.microsoft/pages/responsepage.aspx?id=hrQc_xLZ40mUNBIunEWJXhq6ZLvlw-JMlT4aQ_OVPWtUQUxJVjEzSzUyOTFYWjBNSzExTjNEM1lGMi4u&route=shorturl"
+        Text(
+            text = "Completa el formulario de registro para el programa Campus Seguro. El formulario se abrirá en pantalla completa para que puedas navegar cómodamente.",
+            fontSize = 14.sp,
+            color = Color(0xFF6B7B93),
+            textAlign = TextAlign.Center,
+            lineHeight = 21.sp
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        Button(
+            onClick = onOpenForm,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF0F6AB4)
+            )
+        ) {
+            Text(
+                text = "Abrir formulario de registro",
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
+            )
+        }
     }
+}
 
+// ─── Pantalla completa con el WebView ─────────────────────────────────────────
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RegistroFormScreen(onBack: () -> Unit) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Formulario de Registro") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Atrás"
+                        )
+                    }
+                }
+            )
+        }
+    ) { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            RegistroWebView()
+        }
+    }
+}
+
+// ─── WebView interno ──────────────────────────────────────────────────────────
+@SuppressLint("SetJavaScriptEnabled")
+@Composable
+private fun RegistroWebView() {
+    val context = LocalContext.current
     var isLoading by remember { mutableStateOf(true) }
     var hasError by remember { mutableStateOf(false) }
     var errorMsg by remember { mutableStateOf("") }
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(vertical = 60.dp, horizontal = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Registro / Formulario",
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
-        )
+    Box(modifier = Modifier.fillMaxSize()) {
+        AndroidView(
+            factory = {
+                WebView(it).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
 
-        Spacer(modifier = Modifier.height(10.dp))
+                    val cookieManager = CookieManager.getInstance()
+                    cookieManager.setAcceptCookie(true)
+                    CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
 
-        Text(
-            text = "Completa el formulario dentro de la app. Si tu sesión expira, vuelve a cargar la página.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
+                    settings.javaScriptEnabled = true
+                    settings.domStorageEnabled = true
+                    settings.loadsImagesAutomatically = true
+                    settings.useWideViewPort = true
+                    settings.loadWithOverviewMode = true
+                    settings.javaScriptCanOpenWindowsAutomatically = true
+                    settings.setSupportMultipleWindows(true)
+                    settings.cacheMode = WebSettings.LOAD_DEFAULT
+                    settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                    settings.userAgentString = settings.userAgentString + " CSSUCAWebView"
 
-        Spacer(modifier = Modifier.height(18.dp))
+                    webChromeClient = WebChromeClient()
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(650.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.surface,
-                    shape = MaterialTheme.shapes.medium
-                )
-        ) {
-            AndroidView(
-                factory = {
-                    WebView(it).apply {
-                        layoutParams = ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT
-                        )
+                    webViewClient = object : WebViewClient() {
+                        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                            isLoading = true
+                            hasError = false
+                            errorMsg = ""
+                        }
 
-                        // ✅ Cookies (CLAVE para Microsoft Login)
-                        val cookieManager = CookieManager.getInstance()
-                        cookieManager.setAcceptCookie(true)
-                        // Third-party cookies son necesarias para algunos flujos de Microsoft/AAD
-                        CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
+                        override fun onPageFinished(view: WebView?, url: String?) {
+                            isLoading = false
+                        }
 
-                        // ✅ Settings WebView
-                        settings.javaScriptEnabled = true
-                        settings.domStorageEnabled = true
-                        settings.loadsImagesAutomatically = true
-                        settings.mediaPlaybackRequiresUserGesture = false
+                        override fun shouldOverrideUrlLoading(
+                            view: WebView?,
+                            request: WebResourceRequest?
+                        ): Boolean {
+                            val target = request?.url?.toString() ?: return false
+                            val host = request.url?.host ?: ""
+                            val allowed = listOf(
+                                "forms.cloud.microsoft",
+                                "login.microsoftonline.com",
+                                "login.live.com",
+                                "microsoft.com",
+                                "office.com"
+                            )
+                            val isAllowed = allowed.any { host.contains(it, ignoreCase = true) }
 
-                        settings.useWideViewPort = true
-                        settings.loadWithOverviewMode = true
-
-                        // Popups/ventanas (login a veces lo usa)
-                        settings.javaScriptCanOpenWindowsAutomatically = true
-                        settings.setSupportMultipleWindows(true)
-
-                        // Mejor compatibilidad
-                        settings.cacheMode = WebSettings.LOAD_DEFAULT
-                        settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-
-                        // User-Agent: a veces ayuda a evitar páginas “lite” raras
-                        settings.userAgentString = settings.userAgentString + " CSSUCAWebView"
-
-                        webChromeClient = WebChromeClient()
-
-                        webViewClient = object : WebViewClient() {
-
-                            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                                isLoading = true
-                                hasError = false
-                                errorMsg = ""
-                            }
-
-                            override fun onPageFinished(view: WebView?, url: String?) {
-                                isLoading = false
-                            }
-
-                            override fun shouldOverrideUrlLoading(
-                                view: WebView?,
-                                request: WebResourceRequest?
-                            ): Boolean {
-                                val target = request?.url?.toString() ?: return false
-
-                                // ✅ Permitir dentro del WebView dominios de Microsoft Forms/Login
-                                val allowed = listOf(
-                                    "forms.cloud.microsoft",
-                                    "login.microsoftonline.com",
-                                    "login.live.com",
-                                    "microsoft.com",
-                                    "office.com"
-                                )
-
-                                val host = request?.url?.host ?: ""
-                                val isAllowed = allowed.any { host.contains(it, ignoreCase = true) }
-
-                                // Si es algo fuera (por ejemplo WhatsApp/mailto), abrir externo
-                                if (!isAllowed || target.startsWith("mailto:") || target.startsWith("tel:")) {
-                                    runCatching {
-                                        val intent = android.content.Intent(
-                                            android.content.Intent.ACTION_VIEW,
-                                            Uri.parse(target)
-                                        )
-                                        context.startActivity(intent)
-                                    }
-                                    return true
+                            if (!isAllowed || target.startsWith("mailto:") || target.startsWith("tel:")) {
+                                runCatching {
+                                    val intent = android.content.Intent(
+                                        android.content.Intent.ACTION_VIEW,
+                                        Uri.parse(target)
+                                    )
+                                    context.startActivity(intent)
                                 }
-
-                                return false // que cargue normal
+                                return true
                             }
-
-                            @Deprecated("Deprecated in Java")
-                            override fun onReceivedError(
-                                view: WebView?,
-                                errorCode: Int,
-                                description: String?,
-                                failingUrl: String?
-                            ) {
-                                hasError = true
-                                isLoading = false
-                                errorMsg = description ?: "Error cargando el formulario."
-                            }
+                            return false
                         }
 
-                        loadUrl(formUrl)
-                    }
-                },
-                modifier = Modifier.fillMaxSize()
-            )
-
-            // Loader
-            if (isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        CircularProgressIndicator()
-                        Spacer(Modifier.height(10.dp))
-                        Text(
-                            text = "Cargando formulario...",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-            }
-
-            // Error overlay
-            if (hasError) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Card(
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                        @Deprecated("Deprecated in Java")
+                        override fun onReceivedError(
+                            view: WebView?,
+                            errorCode: Int,
+                            description: String?,
+                            failingUrl: String?
                         ) {
-                            Text(
-                                text = "No se pudo cargar",
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(Modifier.height(6.dp))
-                            Text(
-                                text = errorMsg,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textAlign = TextAlign.Center
-                            )
-                            Spacer(Modifier.height(12.dp))
-                            Button(onClick = {
-                                // Recargar abriendo externo como fallback rápido
-                                val intent = android.content.Intent(
-                                    android.content.Intent.ACTION_VIEW,
-                                    Uri.parse(formUrl)
-                                )
-                                context.startActivity(intent)
-                            }) {
-                                Text("Abrir en navegador")
-                            }
+                            hasError = true
+                            isLoading = false
+                            errorMsg = description ?: "Error al cargar el formulario."
                         }
                     }
+
+                    loadUrl(formUrl)
+                }
+            },
+            modifier = Modifier.fillMaxSize()
+        )
+
+        // Loading
+        if (isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    CircularProgressIndicator()
+                    Text(
+                        text = "Cargando formulario...",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
-
-        TextButton(
-            onClick = {
-                val intent = android.content.Intent(
-                    android.content.Intent.ACTION_VIEW,
-                    Uri.parse(formUrl)
-                )
-                context.startActivity(intent)
+        // Error
+        if (hasError) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Card(
+                    modifier = Modifier.padding(24.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = "No se pudo cargar",
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = errorMsg,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+                        Button(
+                            onClick = {
+                                runCatching {
+                                    val intent = android.content.Intent(
+                                        android.content.Intent.ACTION_VIEW,
+                                        Uri.parse(formUrl)
+                                    )
+                                    context.startActivity(intent)
+                                }
+                            }
+                        ) {
+                            Text("Abrir en navegador")
+                        }
+                    }
+                }
             }
-        ) {
-            Text("Abrir formulario en navegador (alternativa)")
         }
     }
 }
