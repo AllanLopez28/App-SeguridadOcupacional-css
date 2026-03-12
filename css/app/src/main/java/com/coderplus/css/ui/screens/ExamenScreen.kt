@@ -207,7 +207,7 @@ fun ExamenScreen(onOpenExamen: () -> Unit) {
                         color = Color(0xFF1E5C3A)
                     )
                     Text(
-                        text = "Tu participación ha sido registrada en el programa Campus Seguro. Los resultados serán enviados a ${AppConfig.RESULTS_EMAIL}.",
+                        text = "Tu participación ha sido registrada.Los resultados serán enviados a ${AppConfig.RESULTS_EMAIL}.",
                         fontSize = 13.sp,
                         color = Color(0xFF2C7A50),
                         lineHeight = 19.sp

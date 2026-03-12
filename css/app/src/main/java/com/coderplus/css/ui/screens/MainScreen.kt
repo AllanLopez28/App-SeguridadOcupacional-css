@@ -22,12 +22,10 @@ fun MainScreen() {
     val coroutineScope = rememberCoroutineScope()
 
     var selectedProtocol by remember { mutableStateOf<String?>(null) }
-    var showRegistroForm by remember { mutableStateOf(false) }
     var showExamenForm by remember { mutableStateOf(false) }
 
     val navigateToSection: (String) -> Unit = { section ->
         coroutineScope.launch {
-            // ⚠️ Los índices bajaron 1 porque eliminamos el item HeroActionsSection
             val index = when (section) {
                 "importancia" -> 1
                 "que-es"      -> 2
@@ -35,18 +33,11 @@ fun MainScreen() {
                 "epp"         -> 4
                 "riesgos"     -> 5
                 "reportes"    -> 6
-                "registro"    -> 7
-                "examen"      -> 8
+                "examen"      -> 7
                 else          -> 0
             }
             scrollState.animateScrollToItem(index)
         }
-    }
-
-    // ── Pantalla completa del formulario de registro ──────────────────────────
-    if (showRegistroForm) {
-        RegistroFormScreen(onBack = { showRegistroForm = false })
-        return
     }
 
     // ── Pantalla completa del examen ──────────────────────────────────────────
@@ -123,8 +114,6 @@ fun MainScreen() {
             // 6
             item { ReportesScreen() }
             // 7
-            item { RegistroScreen(onOpenForm = { showRegistroForm = true }) }
-            // 8
             item { ExamenScreen(onOpenExamen = { showExamenForm = true }) }
 
             // Footer
